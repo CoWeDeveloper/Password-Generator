@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import "./index.css"
 
 function App() {
@@ -6,6 +6,14 @@ const [length, setLength] = useState(6);
 const [password, setPassword] = useState("");
 const [allowNum, setAllowNum] = useState(false);
 const [allowChar, setAllowChar] = useState(false);
+
+const passRef = useRef<HTMLInputElement | null>(null);
+
+const copyToClip = useCallback(() => {
+  // passRef.current?.select();
+  // passRef.current?.setSelectionRange(0, 999);
+  window.navigator.clipboard.writeText(password)
+}, [password])
 
 const passwordGenerator = useCallback(()=>{
 let pass = "";
@@ -39,7 +47,7 @@ useEffect(()=>{
       <div className=''>
         <div className='w-64 border-blue-600 border-2 flex justify-center py-1 mx-auto rounded-md bg-white  '>
           <input type="text" readOnly className='rounded-lg border-none focus:outline-none' placeholder='password' value={password}/>
-          <button className='  text-center bg-blue-400 rounded-xl  px-2 py-1'>Copy</button>
+          <button onClick={copyToClip} className='  text-center bg-blue-400 rounded-xl  px-2 py-1'>Copy</button>
         </div>
 
         <div className='flex justify-center items-center py-5'>
@@ -49,7 +57,8 @@ useEffect(()=>{
           max={12}
           value={length}
           id="lengthInput"
-          onChange={(e)=>{setLength(()=>e.target.value)}}
+          ref={passRef}
+          onChange={(e) => {setLength(parseInt(e.target.value))}}
           />
           <label htmlFor='lengthInput' className='flex justify-center items-center mx-1 px-5'>Length({length})</label>  
           <button className='bg-gray-300 hover:bg-gray-400 hover:text-amber-300 rounded-lg py-1 px-5'
